@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ULTIMATE GAMING - FF 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff9d00;
+            --secondary-color: #121212;
+            --accent-color: #00d2ff;
+            --card-bg: #1e1e26;
+            --text-white: #ffffff;
+            --grad: linear-gradient(135deg, #ff9d00, #ff4e00);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-color);
+            color: var(--text-white);
+            padding-bottom: 80px;
+        }
+
+        /* --- টপ হেডার --- */
+        .top-header {
+            background: #1a1a1a;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-weight: 700; font-size: 20px; color: var(--primary-color); }
+        .wallet-box {
+            background: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid var(--primary-color);
+        }
+
+        /* --- স্লাইডার ব্যানার --- */
+        .banner-container { padding: 15px; }
+        .banner {
+            width: 100%; height: 160px;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://img.freepik.com/free-vector/gaming-banner-template-with-action-character_23-2148805720.jpg');
+            background-size: cover; background-position: center;
+            border-radius: 15px; display: flex; flex-direction: column;
+            justify-content: center; padding: 20px; border: 1px solid #444;
+        }
+        .banner h2 { font-size: 22px; color: gold; }
+        .banner p { font-size: 12px; }
+
+        /* --- ক্যাটাগরি --- */
+        .categories { display: flex; overflow-x: auto; padding: 10px 15px; gap: 10px; }
+        .cat-item {
+            background: var(--card-bg); padding: 8px 20px; border-radius: 25px;
+            white-space: nowrap; font-size: 14px; border: 1px solid #333; cursor: pointer;
+        }
+        .cat-item.active { background: var(--grad); border: none; }
+
+        /* --- ম্যাচ কার্ড --- */
+        .match-card {
+            background: var(--card-bg); margin: 15px; border-radius: 15px;
+            overflow: hidden; border: 1px solid #333; position: relative;
+        }
+        
+        .match-image {
+            width: 100%; height: 120px; background: #2a2a35;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 24px; color: rgba(255,255,255,0.1);
+        }
+
+        .match-details { padding: 15px; }
+        .match-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .match-info-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; background: rgba(0,0,0,0.2);
+            padding: 10px; border-radius: 10px; text-align: center;
+        }
+        .info-label { font-size: 10px; color: #aaa; text-transform: uppercase; }
+        .info-value { font-size: 14px; font-weight: 600; color: #fff; }
+
+        .slots-container { margin-top: 15px; }
+        .slot-bar { width: 100%; height: 8px; background: #333; border-radius: 10px; overflow: hidden; }
+        .slot-fill { width: 60%; height: 100%; background: var(--grad); }
+        .slot-text { display: flex; justify-content: space-between; font-size: 11px; margin-top: 5px; color: #aaa; }
+
+        .btn-join {
+            width: 100%; padding: 12px; border: none; margin-top: 15px;
+            border-radius: 10px; background: var(--grad); color: white;
+            font-weight: 700; cursor: pointer; text-transform: uppercase;
+        }
+
+        /* --- বটম নেভিগেশন --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; max-width: 1000px;
+            background: #1a1a1a; display: flex; justify-content: space-around;
+            padding: 12px 0; border-top: 1px solid #333; z-index: 2000;
+        }
+        .nav-item { text-align: center; color: #888; text-decoration: none; font-size: 11px; }
+        .nav-item.active { color: var(--primary-color); }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+        /* --- পেজ কন্টেন্ট --- */
+        .page-content { display: none; padding: 15px; }
+        .page-content.active { display: block; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #aaa; }
+        .form-input {
+            width: 100%; padding: 12px; background: #2a2a35; border: 1px solid #444;
+            border-radius: 10px; color: white; outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="logo">KHELO BD</div>
+        <div class="wallet-box">
+            <span>🪙</span>
+            <span id="balance">0.00</span>
+        </div>
+    </header>
+
+    <div id="home" class="page-content active">
+        <div class="banner-container">
+            <div class="banner">
+                <h2>ম্যাচ খেলে জিতুন লাখ টাকা</h2>
+                <p>বাংলাদেশের সবথেকে বড় গেমিং টুর্নামেন্ট ২০২৬</p>
+            </div>
+        </div>
+
+        <div class="categories">
+            <div class="cat-item active">All Matches</div>
+            <div class="cat-item">Full Map</div>
+            <div class="cat-item">Clash Squad</div>
+            <div class="cat-item">1vs1 / 2vs2</div>
+        </div>
+
+        <div class="match-card">
+            <div class="match-image">1 VS 1</div>
+            <div class="match-details">
+                <div class="match-title"><span>Solo Custom Match</span><span style="color: #00ffcc;">#1026</span></div>
+                <div class="match-info-grid">
+                    <div><div class="info-label">Win Prize</div><div class="info-value">৩৬০৳</div></div>
+                    <div><div class="info-label">Map</div><div class="info-value">Bermuda</div></div>
+                    <div><div class="info-label">Entry Fee</div><div class="info-value">২০০৳</div></div>
+                </div>
+                <div class="slots-container">
+                    <div class="slot-bar"><div class="slot-fill" style="width: 10%;"></div></div>
+                    <div class="slot-text"><span>Joined: 0/2</span><span>Wait for Opponent</span></div>
+                </div>
+                <button class="btn-join">Join Match</button>
+            </div>
+        </div>
+
+        <div class="match-card">
+            <div class="match-image">2 VS 2</div>
+            <div class="match-details">
+                <div class="match-title"><span>Duo Custom Match</span><span style="color: #00ffcc;">#1025</span></div>
+                <div class="match-info-grid">
+                    <div><div class="info-label">Win Prize</div><div class="info-value">৩৫০৳</div></div>
+                    <div><div class="info-label">Per Kill</div><div class="info-value">১৭৫৳</div></div>
+                    <div><div class="info-label">Entry Fee</div><div class="info-value">১০০৳</div></div>
+                </div>
+                <div class="slots-container">
+                    <div class="slot-bar"><div class="slot-fill" style="width: 50%;"></div></div>
+                    <div class="slot-text"><span>Joined: 2/4</span><span>Only 2 Slots Left!</span></div>
+                </div>
+                <button class="btn-join">Join Match</button>
+            </div>
+        </div>
+
+        <div class="match-card">
+            <div class="match-image">4 VS 4</div>
+            <div class="match-details">
+                <div class="match-title"><span>CS Custom Match</span><span style="color: #00ffcc;">#1024</span></div>
+                <div class="match-info-grid">
+                    <div><div class="info-label">Win Prize</div><div class="info-value">৩৪০৳</div></div>
+                    <div><div class="info-label">Per Kill</div><div class="info-value">৮৫৳</div></div>
+                    <div><div class="info-label">Entry Fee</div><div class="info-value">৫০৳</div></div>
+                </div>
+                <div class="slots-container">
+                    <div class="slot-bar"><div class="slot-fill" style="width: 25%;"></div></div>
+                    <div class="slot-text"><span>Joined: 2/8</span><span>Only 6 Slots Left!</span></div>
+                </div>
+                <button class="btn-join">Join Match</button>
+            </div>
+        </div>
+
+        <div class="match-card">
+            <div class="match-image">SOLO</div>
+            <div class="match-details">
+                <div class="match-title"><span>সোলো বারমুডা</span><span style="color: #00ffcc;">#1027</span></div>
+                <div class="match-info-grid">
+                    <div><div class="info-label">Win (1st)</div><div class="info-value">৫০৳</div></div>
+                    <div><div class="info-label">Per Kill</div><div class="info-value">৫৳</div></div>
+                    <div><div class="info-label">Entry Fee</div><div class="info-value">১০৳</div></div>
+                </div>
+                <div class="slots-container">
+                    <div class="slot-bar"><div class="slot-fill" style="width: 80%;"></div></div>
+                    <div class="slot-text"><span>Joined: 40/50</span><span>Hurry Up!</span></div>
+                </div>
+                <button class="btn-join">Join Match</button>
+            </div>
+        </div>
+
+        <div class="match-card">
+            <div class="match-image">DUO</div>
+            <div class="match-details">
+                <div class="match-title"><span>ডুও বারমুডা</span><span style="color: #00ffcc;">#1028</span></div>
+                <div class="match-info-grid">
+                    <div><div class="info-label">Win Prize</div><div class="info-value">১০০৳</div></div>
+                    <div><div class="info-label">Per Kill</div><div class="info-value">১০৳</div></div>
+                    <div><div class="info-label">Entry Fee</div><div class="info-value">২০৳</div></div>
+                </div>
+                <div class="slots-container">
+                    <div class="slot-bar"><div class="slot-fill" style="width: 40%;"></div></div>
+                    <div class="slot-text"><span>Joined: 20/48</span><span>28 Slots Left</span></div>
+                </div>
+                <button class="btn-join">Join Match</button>
+            </div>
+        </div>
+
+        <div class="match-card">
+            <div class="match-image">DUO PRO</div>
+            <div class="match-details">
+                <div class="match-title"><span>ডুও বারমুডা (PRO)</span><span style="color: #00ffcc;">#1029</span></div>
+                <div class="match-info-grid">
+                    <div><div class="info-label">Win Prize</div><div class="info-value">২০০৳</div></div>
+                    <div><div class="info-label">Per Kill</div><div class="info-value">১৫৳</div></div>
+                    <div><div class="info-label">Entry Fee</div><div class="info-value">৪০৳</div></div>
+                </div>
+                <div class="slots-container">
+                    <div class="slot-bar"><div class="slot-fill" style="width: 15%;"></div></div>
+                    <div class="slot-text"><span>Joined: 8/48</span><span>Registration Open</span></div>
+                </div>
+                <button class="btn-join">Join Match</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deposit-page" class="page-content">
+        <h2 style="margin-bottom: 20px;">Add Money</h2>
+        <div class="match-card" style="padding: 20px;">
+            <p style="color: var(--primary-color); font-weight: bold; margin-bottom: 15px;">Send Money (Personal): 01910658737</p>
+            <div class="input-group">
+                <label>Select Method</label>
+                <select class="form-input">
+                    <option>bKash</option>
+                    <option>Nagad</option>
+                    <option>Rocket</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Transaction ID</label>
+                <input type="text" class="form-input" placeholder="Ex: 8J92KLL0">
+            </div>
+            <div class="input-group">
+                <label>Amount</label>
+                <input type="number" class="form-input" placeholder="Min 50৳">
+            </div>
+            <button class="btn-join">Submit Deposit</button>
+        </div>
+    </div>
+
+    <div id="withdraw-page" class="page-content">
+        <h2 style="margin-bottom: 20px;">Withdraw Money</h2>
+        <div class="match-card" style="padding: 20px;">
+            <div class="input-group">
+                <label>Withdraw Method</label>
+                <select class="form-input">
+                    <option>bKash</option>
+                    <option>Nagad</option>
+                    <option>Rocket</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Your Name</label>
+                <input type="text" class="form-input" placeholder="Enter Account Name">
+            </div>
+            <div class="input-group">
+                <label>Receiver Number</label>
+                <input type="text" class="form-input" placeholder="017XXXXXXXX">
+            </div>
+            <div class="input-group">
+                <label>Amount</label>
+                <input type="number" class="form-input" placeholder="Min 100৳">
+            </div>
+            <button class="btn-join" style="background: #4CAF50;">Request Withdraw</button>
+        </div>
+    </div>
+
+    <div id="profile-page" class="page-content">
+        <h2 style="margin-bottom: 20px;">My Profile</h2>
+        <div class="match-card" style="padding: 20px; text-align: center;">
+            <div style="width: 80px; height: 80px; background: #444; border-radius: 50%; margin: 0 auto 15px;"></div>
+            <h3>New Gamer</h3>
+            <p style="font-size: 12px; color: #aaa;">Join our community to win prizes</p>
+            <hr style="margin: 20px 0; border: 0.5px solid #333;">
+            <input type="text" class="form-input" style="margin-bottom: 10px;" placeholder="Full Name">
+            <input type="email" class="form-input" style="margin-bottom: 10px;" placeholder="Email Address">
+            <input type="password" class="form-input" style="margin-bottom: 10px;" placeholder="Password">
+            <button class="btn-join">Update Profile / Register</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="javascript:void(0)" class="nav-item active" onclick="navTo('home')">
+            <span class="nav-icon">🏠</span>Home
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="navTo('deposit-page')">
+            <span class="nav-icon">💰</span>Deposit
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="navTo('withdraw-page')">
+            <span class="nav-icon">💳</span>Withdraw
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="navTo('profile-page')">
+            <span class="nav-icon">👤</span>Profile
+        </a>
+    </nav>
+
+    <script>
+        function navTo(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
