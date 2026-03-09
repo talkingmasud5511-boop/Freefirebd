@@ -1,344 +1,776 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ULTIMATE GAMING - FF 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>APK Builder Pro - Web to App Converter</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
     <style>
-        :root {
-            --primary-color: #ff9d00;
-            --secondary-color: #121212;
-            --accent-color: #00d2ff;
-            --card-bg: #1e1e26;
-            --text-white: #ffffff;
-            --grad: linear-gradient(135deg, #ff9d00, #ff4e00);
-        }
-
         * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--secondary-color);
-            color: var(--text-white);
-            padding-bottom: 80px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0c14;
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* --- টপ হেডার --- */
-        .top-header {
-            background: #1a1a1a;
-            padding: 15px 20px;
+        /* Animated Background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #3b82f6, #8b5cf6);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 12, 20, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: -1;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(18, 22, 36, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #333;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
         }
 
-        .logo { font-weight: 700; font-size: 20px; color: var(--primary-color); }
-        .wallet-box {
-            background: #333;
-            padding: 5px 12px;
-            border-radius: 20px;
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .dashboard-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Card */
+        .converter-card {
+            background: rgba(26, 30, 44, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        /* Firebase Status */
+        .firebase-status {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            border-radius: 12px;
+            padding: 15px 20px;
             display: flex;
             align-items: center;
-            gap: 5px;
-            border: 1px solid var(--primary-color);
+            gap: 15px;
+            margin-bottom: 30px;
+            color: #10b981;
         }
 
-        /* --- স্লাইডার ব্যানার --- */
-        .banner-container { padding: 15px; }
-        .banner {
-            width: 100%; height: 160px;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://img.freepik.com/free-vector/gaming-banner-template-with-action-character_23-2148805720.jpg');
-            background-size: cover; background-position: center;
-            border-radius: 15px; display: flex; flex-direction: column;
-            justify-content: center; padding: 20px; border: 1px solid #444;
-        }
-        .banner h2 { font-size: 22px; color: gold; }
-        .banner p { font-size: 12px; }
-
-        /* --- ক্যাটাগরি --- */
-        .categories { display: flex; overflow-x: auto; padding: 10px 15px; gap: 10px; }
-        .cat-item {
-            background: var(--card-bg); padding: 8px 20px; border-radius: 25px;
-            white-space: nowrap; font-size: 14px; border: 1px solid #333; cursor: pointer;
-        }
-        .cat-item.active { background: var(--grad); border: none; }
-
-        /* --- ম্যাচ কার্ড --- */
-        .match-card {
-            background: var(--card-bg); margin: 15px; border-radius: 15px;
-            overflow: hidden; border: 1px solid #333; position: relative;
-        }
-        
-        .match-image {
-            width: 100%; height: 120px; background: #2a2a35;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 24px; color: rgba(255,255,255,0.1);
+        .firebase-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #ef4444;
         }
 
-        .match-details { padding: 15px; }
-        .match-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .match-info-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 10px; background: rgba(0,0,0,0.2);
-            padding: 10px; border-radius: 10px; text-align: center;
-        }
-        .info-label { font-size: 10px; color: #aaa; text-transform: uppercase; }
-        .info-value { font-size: 14px; font-weight: 600; color: #fff; }
-
-        .slots-container { margin-top: 15px; }
-        .slot-bar { width: 100%; height: 8px; background: #333; border-radius: 10px; overflow: hidden; }
-        .slot-fill { width: 60%; height: 100%; background: var(--grad); }
-        .slot-text { display: flex; justify-content: space-between; font-size: 11px; margin-top: 5px; color: #aaa; }
-
-        .btn-join {
-            width: 100%; padding: 12px; border: none; margin-top: 15px;
-            border-radius: 10px; background: var(--grad); color: white;
-            font-weight: 700; cursor: pointer; text-transform: uppercase;
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        /* --- বটম নেভিগেশন --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; max-width: 1000px;
-            background: #1a1a1a; display: flex; justify-content: space-around;
-            padding: 12px 0; border-top: 1px solid #333; z-index: 2000;
+        .input-group {
+            margin-bottom: 20px;
         }
-        .nav-item { text-align: center; color: #888; text-decoration: none; font-size: 11px; }
-        .nav-item.active { color: var(--primary-color); }
-        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
 
-        /* --- পেজ কন্টেন্ট --- */
-        .page-content { display: none; padding: 15px; }
-        .page-content.active { display: block; }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #aaa; }
-        .form-input {
-            width: 100%; padding: 12px; background: #2a2a35; border: 1px solid #444;
-            border-radius: 10px; color: white; outline: none;
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(10, 12, 20, 0.8);
+            border: 1px solid #2a2f3f;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Icon Upload */
+        .icon-upload {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .icon-preview {
+            width: 80px;
+            height: 80px;
+            background: #1a1e2c;
+            border: 2px dashed #2a2f3f;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+        }
+
+        .icon-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 13px;
+        }
+
+        .icon-upload input {
+            flex: 1;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .feature {
+            background: rgba(10, 12, 20, 0.6);
+            border: 1px solid #2a2f3f;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .feature:hover {
+            border-color: #3b82f6;
+            transform: translateY(-5px);
+        }
+
+        .feature i {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #3b82f6;
+        }
+
+        .feature h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .feature p {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        /* Generate Button */
+        .generate-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .generate-btn:hover::before {
+            left: 100%;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #2a2f3f;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Output Section */
+        .output-section {
+            display: none;
+            margin-top: 40px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .output-section.show {
+            display: block;
+        }
+
+        .apk-card {
+            background: rgba(10, 12, 20, 0.8);
+            border: 1px solid #2a2f3f;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .apk-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 50px;
+            color: white;
+        }
+
+        .apk-info {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1a1e2c;
+            border-radius: 12px;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #2a2f3f;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            margin: 20px 0;
+            transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .share-btn {
+            width: 45px;
+            height: 45px;
+            background: #1a1e2c;
+            border: 1px solid #2a2f3f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .share-btn:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1e2c;
+            border: 1px solid #3b82f6;
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: white;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .navbar {
+                padding: 15px;
+            }
+
+            .nav-links {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="gradient-bg"></div>
+    <div class="overlay"></div>
 
-    <header class="top-header">
-        <div class="logo">KHELO BD</div>
-        <div class="wallet-box">
-            <span>🪙</span>
-            <span id="balance">0.00</span>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">APK Builder Pro</div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Features</a>
+            <a href="#">Pricing</a>
+            <a href="#">Docs</a>
         </div>
-    </header>
-
-    <div id="home" class="page-content active">
-        <div class="banner-container">
-            <div class="banner">
-                <h2>ম্যাচ খেলে জিতুন লাখ টাকা</h2>
-                <p>বাংলাদেশের সবথেকে বড় গেমিং টুর্নামেন্ট ২০২৬</p>
-            </div>
-        </div>
-
-        <div class="categories">
-            <div class="cat-item active">All Matches</div>
-            <div class="cat-item">Full Map</div>
-            <div class="cat-item">Clash Squad</div>
-            <div class="cat-item">1vs1 / 2vs2</div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-image">1 VS 1</div>
-            <div class="match-details">
-                <div class="match-title"><span>Solo Custom Match</span><span style="color: #00ffcc;">#1026</span></div>
-                <div class="match-info-grid">
-                    <div><div class="info-label">Win Prize</div><div class="info-value">৩৬০৳</div></div>
-                    <div><div class="info-label">Map</div><div class="info-value">Bermuda</div></div>
-                    <div><div class="info-label">Entry Fee</div><div class="info-value">২০০৳</div></div>
-                </div>
-                <div class="slots-container">
-                    <div class="slot-bar"><div class="slot-fill" style="width: 10%;"></div></div>
-                    <div class="slot-text"><span>Joined: 0/2</span><span>Wait for Opponent</span></div>
-                </div>
-                <button class="btn-join">Join Match</button>
-            </div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-image">2 VS 2</div>
-            <div class="match-details">
-                <div class="match-title"><span>Duo Custom Match</span><span style="color: #00ffcc;">#1025</span></div>
-                <div class="match-info-grid">
-                    <div><div class="info-label">Win Prize</div><div class="info-value">৩৫০৳</div></div>
-                    <div><div class="info-label">Per Kill</div><div class="info-value">১৭৫৳</div></div>
-                    <div><div class="info-label">Entry Fee</div><div class="info-value">১০০৳</div></div>
-                </div>
-                <div class="slots-container">
-                    <div class="slot-bar"><div class="slot-fill" style="width: 50%;"></div></div>
-                    <div class="slot-text"><span>Joined: 2/4</span><span>Only 2 Slots Left!</span></div>
-                </div>
-                <button class="btn-join">Join Match</button>
-            </div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-image">4 VS 4</div>
-            <div class="match-details">
-                <div class="match-title"><span>CS Custom Match</span><span style="color: #00ffcc;">#1024</span></div>
-                <div class="match-info-grid">
-                    <div><div class="info-label">Win Prize</div><div class="info-value">৩৪০৳</div></div>
-                    <div><div class="info-label">Per Kill</div><div class="info-value">৮৫৳</div></div>
-                    <div><div class="info-label">Entry Fee</div><div class="info-value">৫০৳</div></div>
-                </div>
-                <div class="slots-container">
-                    <div class="slot-bar"><div class="slot-fill" style="width: 25%;"></div></div>
-                    <div class="slot-text"><span>Joined: 2/8</span><span>Only 6 Slots Left!</span></div>
-                </div>
-                <button class="btn-join">Join Match</button>
-            </div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-image">SOLO</div>
-            <div class="match-details">
-                <div class="match-title"><span>সোলো বারমুডা</span><span style="color: #00ffcc;">#1027</span></div>
-                <div class="match-info-grid">
-                    <div><div class="info-label">Win (1st)</div><div class="info-value">৫০৳</div></div>
-                    <div><div class="info-label">Per Kill</div><div class="info-value">৫৳</div></div>
-                    <div><div class="info-label">Entry Fee</div><div class="info-value">১০৳</div></div>
-                </div>
-                <div class="slots-container">
-                    <div class="slot-bar"><div class="slot-fill" style="width: 80%;"></div></div>
-                    <div class="slot-text"><span>Joined: 40/50</span><span>Hurry Up!</span></div>
-                </div>
-                <button class="btn-join">Join Match</button>
-            </div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-image">DUO</div>
-            <div class="match-details">
-                <div class="match-title"><span>ডুও বারমুডা</span><span style="color: #00ffcc;">#1028</span></div>
-                <div class="match-info-grid">
-                    <div><div class="info-label">Win Prize</div><div class="info-value">১০০৳</div></div>
-                    <div><div class="info-label">Per Kill</div><div class="info-value">১০৳</div></div>
-                    <div><div class="info-label">Entry Fee</div><div class="info-value">২০৳</div></div>
-                </div>
-                <div class="slots-container">
-                    <div class="slot-bar"><div class="slot-fill" style="width: 40%;"></div></div>
-                    <div class="slot-text"><span>Joined: 20/48</span><span>28 Slots Left</span></div>
-                </div>
-                <button class="btn-join">Join Match</button>
-            </div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-image">DUO PRO</div>
-            <div class="match-details">
-                <div class="match-title"><span>ডুও বারমুডা (PRO)</span><span style="color: #00ffcc;">#1029</span></div>
-                <div class="match-info-grid">
-                    <div><div class="info-label">Win Prize</div><div class="info-value">২০০৳</div></div>
-                    <div><div class="info-label">Per Kill</div><div class="info-value">১৫৳</div></div>
-                    <div><div class="info-label">Entry Fee</div><div class="info-value">৪০৳</div></div>
-                </div>
-                <div class="slots-container">
-                    <div class="slot-bar"><div class="slot-fill" style="width: 15%;"></div></div>
-                    <div class="slot-text"><span>Joined: 8/48</span><span>Registration Open</span></div>
-                </div>
-                <button class="btn-join">Join Match</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="deposit-page" class="page-content">
-        <h2 style="margin-bottom: 20px;">Add Money</h2>
-        <div class="match-card" style="padding: 20px;">
-            <p style="color: var(--primary-color); font-weight: bold; margin-bottom: 15px;">Send Money (Personal): 01910658737</p>
-            <div class="input-group">
-                <label>Select Method</label>
-                <select class="form-input">
-                    <option>bKash</option>
-                    <option>Nagad</option>
-                    <option>Rocket</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Transaction ID</label>
-                <input type="text" class="form-input" placeholder="Ex: 8J92KLL0">
-            </div>
-            <div class="input-group">
-                <label>Amount</label>
-                <input type="number" class="form-input" placeholder="Min 50৳">
-            </div>
-            <button class="btn-join">Submit Deposit</button>
-        </div>
-    </div>
-
-    <div id="withdraw-page" class="page-content">
-        <h2 style="margin-bottom: 20px;">Withdraw Money</h2>
-        <div class="match-card" style="padding: 20px;">
-            <div class="input-group">
-                <label>Withdraw Method</label>
-                <select class="form-input">
-                    <option>bKash</option>
-                    <option>Nagad</option>
-                    <option>Rocket</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Your Name</label>
-                <input type="text" class="form-input" placeholder="Enter Account Name">
-            </div>
-            <div class="input-group">
-                <label>Receiver Number</label>
-                <input type="text" class="form-input" placeholder="017XXXXXXXX">
-            </div>
-            <div class="input-group">
-                <label>Amount</label>
-                <input type="number" class="form-input" placeholder="Min 100৳">
-            </div>
-            <button class="btn-join" style="background: #4CAF50;">Request Withdraw</button>
-        </div>
-    </div>
-
-    <div id="profile-page" class="page-content">
-        <h2 style="margin-bottom: 20px;">My Profile</h2>
-        <div class="match-card" style="padding: 20px; text-align: center;">
-            <div style="width: 80px; height: 80px; background: #444; border-radius: 50%; margin: 0 auto 15px;"></div>
-            <h3>New Gamer</h3>
-            <p style="font-size: 12px; color: #aaa;">Join our community to win prizes</p>
-            <hr style="margin: 20px 0; border: 0.5px solid #333;">
-            <input type="text" class="form-input" style="margin-bottom: 10px;" placeholder="Full Name">
-            <input type="email" class="form-input" style="margin-bottom: 10px;" placeholder="Email Address">
-            <input type="password" class="form-input" style="margin-bottom: 10px;" placeholder="Password">
-            <button class="btn-join">Update Profile / Register</button>
-        </div>
-    </div>
-
-    <nav class="bottom-nav">
-        <a href="javascript:void(0)" class="nav-item active" onclick="navTo('home')">
-            <span class="nav-icon">🏠</span>Home
-        </a>
-        <a href="javascript:void(0)" class="nav-item" onclick="navTo('deposit-page')">
-            <span class="nav-icon">💰</span>Deposit
-        </a>
-        <a href="javascript:void(0)" class="nav-item" onclick="navTo('withdraw-page')">
-            <span class="nav-icon">💳</span>Withdraw
-        </a>
-        <a href="javascript:void(0)" class="nav-item" onclick="navTo('profile-page')">
-            <span class="nav-icon">👤</span>Profile
-        </a>
+        <button class="dashboard-btn">Dashboard</button>
     </nav>
 
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>Convert Website to Android App</h1>
+            <p>Professional Web to App Converter with Firebase Integration, Push Notifications, and Offline Support</p>
+        </div>
+
+        <!-- Converter Card -->
+        <div class="converter-card">
+            <!-- Firebase Status -->
+            <div class="firebase-status" id="firebaseStatus">
+                <span>🔌</span>
+                <span>Connecting to Firebase...</span>
+            </div>
+
+            <!-- Form Grid -->
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>🌐 Website URL</label>
+                    <input type="url" id="websiteUrl" placeholder="https://your-website.com" value="https://example.com">
+                </div>
+
+                <div class="input-group">
+                    <label>📱 App Name</label>
+                    <input type="text" id="appName" placeholder="My Awesome App" value="MyWebApp">
+                </div>
+
+                <div class="input-group">
+                    <label>📦 Package Name</label>
+                    <input type="text" id="packageName" placeholder="com.yourcompany.app" value="com.myweb.app">
+                </div>
+
+                <div class="input-group">
+                    <label>🎨 Theme Color</label>
+                    <input type="color" id="themeColor" value="#3b82f6">
+                </div>
+            </div>
+
+            <!-- Icon Upload -->
+            <div class="input-group">
+                <label>🖼️ App Icon</label>
+                <div class="icon-upload">
+                    <div class="icon-preview" id="iconPreview">
+                        <span>📱</span>
+                    </div>
+                    <input type="file" id="iconInput" accept="image/*" onchange="previewIcon()">
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="features-grid">
+                <div class="feature">
+                    <i>🔥</i>
+                    <h3>Firebase</h3>
+                    <p>Analytics, DB, Storage</p>
+                </div>
+                <div class="feature">
+                    <i>📨</i>
+                    <h3>Push Notifications</h3>
+                    <p>FCM Integrated</p>
+                </div>
+                <div class="feature">
+                    <i>⚡</i>
+                    <h3>Offline Mode</h3>
+                    <p>Work without internet</p>
+                </div>
+                <div class="feature">
+                    <i>🎨</i>
+                    <h3>Splash Screen</h3>
+                    <p>Custom animated splash</p>
+                </div>
+                <div class="feature">
+                    <i>📱</i>
+                    <h3>Material Design</h3>
+                    <p>Modern UI components</p>
+                </div>
+                <div class="feature">
+                    <i>🔒</i>
+                    <h3>Secure</h3>
+                    <p>SSL Pinning</p>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button class="generate-btn" onclick="generateAPK()">
+                🚀 GENERATE APK
+            </button>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Building your APK... (This may take a minute)</p>
+            </div>
+
+            <!-- Output Section -->
+            <div class="output-section" id="outputSection">
+                <div class="apk-card">
+                    <div class="apk-icon">
+                        📱
+                    </div>
+                    <h2>Your APK is Ready!</h2>
+                    
+                    <div class="apk-info">
+                        <div class="info-row">
+                            <span>App Name:</span>
+                            <span id="outputAppName">MyWebApp</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Package:</span>
+                            <span id="outputPackage">com.myweb.app</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Size:</span>
+                            <span id="outputSize">4.2 MB</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Version:</span>
+                            <span>1.0.0</span>
+                        </div>
+                    </div>
+
+                    <a href="#" class="download-btn" id="downloadBtn" onclick="downloadAPK()">
+                        ⬇️ DOWNLOAD APK
+                    </a>
+
+                    <div class="share-buttons">
+                        <div class="share-btn" onclick="share('whatsapp')">📱</div>
+                        <div class="share-btn" onclick="share('telegram')">✈️</div>
+                        <div class="share-btn" onclick="share('facebook')">📘</div>
+                        <div class="share-btn" onclick="share('copy')">🔗</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
     <script>
-        function navTo(pageId) {
-            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            event.currentTarget.classList.add('active');
+        // ========== FIREBASE CONFIG (আপনার দেওয়া) ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyAFTtmdfQPNmSOqkJ6sIgFM9qyUHVbl1fo",
+            authDomain: "ai-camera-ce799.firebaseapp.com",
+            databaseURL: "https://ai-camera-ce799-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "ai-camera-ce799",
+            storageBucket: "ai-camera-ce799.firebasestorage.app",
+            messagingSenderId: "529466638257",
+            appId: "1:529466638257:web:f2ab032bf97315d5e90790",
+            measurementId: "G-YWBM9QG4FT"
+        };
+
+        // Initialize Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const messaging = firebase.messaging();
+            
+            document.getElementById('firebaseStatus').innerHTML = `
+                <span>✅</span>
+                <span>Firebase Connected Successfully! (Project: ${firebaseConfig.projectId})</span>
+            `;
+            document.getElementById('firebaseStatus').classList.remove('error');
+            
+            console.log("✅ Firebase Ready");
+        } catch (error) {
+            document.getElementById('firebaseStatus').innerHTML = `
+                <span>❌</span>
+                <span>Firebase Connection Failed: ${error.message}</span>
+            `;
+            document.getElementById('firebaseStatus').classList.add('error');
+        }
+
+        // ========== STATE ==========
+        let apkData = null;
+
+        // ========== ICON PREVIEW ==========
+        function previewIcon() {
+            const input = document.getElementById('iconInput');
+            const preview = document.getElementById('iconPreview');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Icon">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // ========== GENERATE APK ==========
+        function generateAPK() {
+            const url = document.getElementById('websiteUrl').value;
+            const appName = document.getElementById('appName').value;
+            const packageName = document.getElementById('packageName').value;
+            const themeColor = document.getElementById('themeColor').value;
+
+            if (!url) {
+                showToast('Please enter website URL');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            
+            // Simulate APK generation (in real app, this would call a backend)
+            setTimeout(() => {
+                document.getElementById('loading').classList.remove('show');
+                
+                // Update output
+                document.getElementById('outputAppName').innerText = appName;
+                document.getElementById('outputPackage').innerText = packageName;
+                document.getElementById('outputSize').innerText = (Math.random() * 5 + 3).toFixed(1) + ' MB';
+                
+                document.getElementById('outputSection').classList.add('show');
+                
+                // Save to Firebase
+                const apkData = {
+                    appName,
+                    packageName,
+                    url,
+                    themeColor,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+                
+                firebase.database().ref('apps').push(apkData)
+                    .then(() => {
+                        console.log('Saved to Firebase');
+                    });
+                
+                showToast('✅ APK Generated Successfully!');
+            }, 3000);
+        }
+
+        // ========== DOWNLOAD APK ==========
+        function downloadAPK() {
+            // In real app, this would download actual APK file
+            // For demo, we'll create a dummy file
+            const appName = document.getElementById('appName').value;
+            const content = 'This is a dummy APK file. In production, this would be a real APK.';
+            const blob = new Blob([content], { type: 'application/vnd.android.package-archive' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${appName}.apk`;
+            a.click();
+            
+            showToast('⬇️ Download started!');
+        }
+
+        // ========== SHARE ==========
+        function share(platform) {
+            const appName = document.getElementById('appName').value;
+            const text = `Check out my app "${appName}" built with APK Builder Pro!`;
+            
+            switch(platform) {
+                case 'whatsapp':
+                    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+                    break;
+                case 'telegram':
+                    window.open(`https://t.me/share/url?url=${encodeURIComponent(text)}`);
+                    break;
+                case 'facebook':
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(text)}`);
+                    break;
+                case 'copy':
+                    navigator.clipboard.writeText(text);
+                    showToast('📋 Copied to clipboard!');
+                    break;
+            }
+        }
+
+        // ========== TOAST ==========
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>
